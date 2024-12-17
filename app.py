@@ -1,8 +1,7 @@
 from app import create_app, db
 
-# this is a comment 2
-#this is comment 1
-
+# This is comment 1
+# This is a comment 2
 
 app = create_app()
 
