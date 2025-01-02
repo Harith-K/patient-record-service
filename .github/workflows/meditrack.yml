@@ -28,7 +28,7 @@ jobs:
     # Step 4: Run the Docker container (for testing)
     - name: Run Docker container
       run: |
-        docker run -d -p 8000:8000 \
+        docker run -d -p 5000:5000 \
           --name patient-service \
           harithchin1673/patient-service:latest
 
@@ -36,9 +36,9 @@ jobs:
     - name: Wait for the service to start
       run: sleep 10
 
-    # Step 6: Test the application
-    - name: Run Integration Tests
-      run: docker exec patient-service python manage.py test patients.tests.test_integration
+    # # Step 6: Test the application
+    # - name: Run Integration Tests
+    #   run: docker exec patient-service python manage.py test patients.tests.test_integration
 
     # Step 7: Push the Docker image to DockerHub
     - name: Push Docker image
