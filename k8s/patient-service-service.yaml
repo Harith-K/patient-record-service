@@ -9,6 +9,6 @@ spec:
     app: patient-service
   ports:
     - protocol: TCP
-      port: 80
-      targetPort: 8000
+      port: 5000
+      targetPort: 5000
   type: LoadBalancer  # Expose the service externally
