@@ -23,14 +23,14 @@ jobs:
 
     # Step 3: Build the Docker image
     - name: Build Docker image
-      run: docker build -t harithchin1673/patient-service:latest .
+      run: docker build -t harithchin1673/patient-service:v1 .
 
     # Step 4: Run the Docker container (for testing)
     - name: Run Docker container
       run: |
         docker run -d -p 5000:5000 \
           --name patient-service \
-          harithchin1673/patient-service:latest
+          harithchin1673/patient-service:v1
 
     # Step 5: Wait for the container to be ready
     - name: Wait for the service to start
@@ -42,7 +42,7 @@ jobs:
 
     # Step 7: Push the Docker image to DockerHub
     - name: Push Docker image
-      run: docker push harithchin1673/patient-service:latest
+      run: docker push harithchin1673/patient-service:v1
 
     # Step 8: Debugging - List containers (Optional)
     - name: Debug - List Docker containers
