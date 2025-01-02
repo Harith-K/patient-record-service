@@ -44,6 +44,8 @@ jobs:
     - name: Push Docker image
       run: docker push harithchin1673/patient-service:v1
 
+       echo "Docker pushed"
+
     # Step 8: Debugging - List containers (Optional)
     - name: Debug - List Docker containers
       run: docker ps -a
