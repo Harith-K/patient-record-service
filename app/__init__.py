@@ -5,8 +5,8 @@ from app.routes import patient_blueprint
 def create_app():
     app = Flask(__name__)
     
-    # MySQL database URI
-    app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://admin:Harith1673@healthsync-db.c1c4ousc21sc.us-east-1.rds.amazonaws.com:3306/healthsync"
+    # SQLite database URI
+    app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///healthsync.db"  # Database file name
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
     db.init_app(app)
