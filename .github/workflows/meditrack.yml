@@ -95,6 +95,7 @@ jobs:
       run: |
         kubectl apply -f k8s/patient-service-deployment.yaml
         kubectl apply -f k8s/patient-service-service.yaml
+        kubectl rollout restart -f k8s/patient-service-deployment.yaml
         kubectl get all
 
 
