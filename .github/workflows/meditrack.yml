@@ -1,36 +1,107 @@
-name: Build and Push Docker Image to Docker Hub
+name: Build, Test, and Push Docker Image
 
 on:
   push:
     branches:
-      - main  # Trigger the workflow when code is pushed to the 'main' branch
+      - main  # Trigger the workflow on pushes to the "main" branch
 
 jobs:
-  build-and-push:
-    name: Build and Push Docker Image
+  build:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout the code
-      - name: Checkout repository
-        uses: actions/checkout@v3
+    # Step 1: Check out the repository
+    - name: Checkout code
+      uses: actions/checkout@v3
 
-      # Step 2: Set up Docker Build Environment
-      - name: Set up Docker Build
-        uses: docker/setup-buildx-action@v2
+    # Step 2: Log in to DockerHub
+    - name: Log in to DockerHub
+      uses: docker/login-action@v2
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
 
-      # Step 3: Log in to Docker Hub
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
+    # Step 3: Build the Docker image
+    - name: Build Docker image
+      run: docker build -t harithchin1673/patient-service:latest .
 
-      # Step 4: Build and Push Docker Image
-      - name: Build and Push Docker Image
-        uses: docker/build-push-action@v4
-        with:
-          context: .
-          file: ./Dockerfile  # Path to your Dockerfile
-          push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/patient-record-service:latest
+    # Step 4: Run the Docker container (for testing)
+    - name: Run Docker container
+      run: |
+        docker run -d -p 8000:8000 \
+          --name patient-service \
+          harithchin1673/patient-service:latest
+
+    # Step 5: Wait for the container to be ready
+    - name: Wait for the service to start
+      run: sleep 10
+
+    # Step 6: Test the application
+    - name: Run Integration Tests
+      run: docker exec patient-service python manage.py test patients.tests.test_integration
+
+    # Step 7: Push the Docker image to DockerHub
+    - name: Push Docker image
+      run: docker push harithchin1673/patient-service:latest
+
+    # Step 8: Debugging - List containers (Optional)
+    - name: Debug - List Docker containers
+      run: docker ps -a
+
+    # ------------------ New Steps for EKS Integration ------------------
+
+    # Step 9: Set up AWS CLI
+    - name: Configure AWS CLI
+      uses: aws-actions/configure-aws-credentials@v3
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ secrets.AWS_REGION }}
+
+    # Step 10: Install eksctl
+    - name: Install eksctl
+      run: |
+        ARCH=amd64
+        PLATFORM=$(uname -s)_$ARCH
+        curl -sLO "https://github.com/eksctl-io/eksctl/releases/latest/download/eksctl_$PLATFORM.tar.gz"
+        tar -xzf eksctl_$PLATFORM.tar.gz -C /tmp && rm eksctl_$PLATFORM.tar.gz
+        sudo mv /tmp/eksctl /usr/local/bin
+
+    # Step 11: Create or Update EKS Cluster
+    - name: Create EKS Cluster with eksctl
+      run: |
+          if aws eks describe-cluster --name patient-service-cluster --region ${{ secrets.AWS_REGION }} > /dev/null 2>&1; then
+            echo "Cluster already exists. Skipping creation."
+          else
+            echo "Cluster does not exist. Creating EKS cluster..."
+            eksctl create cluster \
+              --name patient-service-cluster \
+              --region ${{ secrets.AWS_REGION }} \
+              --nodegroup-name standard-workers \
+              --node-type t3.medium \
+              --nodes 2 \
+              --nodes-min 1 \
+              --nodes-max 3 \
+              --managed
+          fi
+
+    # Step 12: Update kubeconfig for accessing the EKS cluster
+    - name: Update kubeconfig for EKS
+      run: |
+        aws eks --region ${{ secrets.AWS_REGION }} update-kubeconfig --name patient-service-cluster
+
+    # Step 13: Deploy patient-service to EKS
+    - name: Deploy patient-service to EKS
+      run: |
+        kubectl apply -f k8s/patient-service-deployment.yaml
+        kubectl apply -f k8s/patient-service-service.yaml
+
+
+      # Step 14: Rollback Deployment on Failure
+    - name: Rollback Deployment on Failure
+      if: failure()
+      run: |
+        echo "Deployment failed. Rolling back to the previous version..."
+        kubectl rollout undo deployment patient-service
+
+    # -------------------------------------------------------------------
