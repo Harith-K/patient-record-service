@@ -17,5 +17,6 @@ spec:
       containers:
       - name: patient-service
         image: harithchin1673/patient-service:latest
+        imagePullPolicy: Always
         ports:
         - containerPort: 5000

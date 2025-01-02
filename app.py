@@ -10,5 +10,6 @@ def setup_database():
     db.create_all()
 
 if __name__ == '__main__':
+    print("TEST V1111111111111111111111111111")
     app.run(host='0.0.0.0', port=5000)
     #commnet 4
