@@ -3,7 +3,7 @@ from app import create_app, db
 # This is comment 1
 # This is a comment 5
 
-app = create_app()
+# app = create_app()
 
 @app.before_first_request
 def setup_database():
