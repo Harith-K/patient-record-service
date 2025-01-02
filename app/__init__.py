@@ -5,8 +5,8 @@ from app.routes import patient_blueprint
 def create_app():
     app = Flask(__name__)
     
-    # PostgreSQL database URI
-    app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql+psycopg2://postgres:postgres@ec2-52-71-203-176.compute-1.amazonaws.com:5432/meditrack"
+    # MySQL database URI
+    app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://admin:Harith1673@healthsync-db.c1c4ousc21sc.us-east-1.rds.amazonaws.com:3306/healthsync"
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
     db.init_app(app)
