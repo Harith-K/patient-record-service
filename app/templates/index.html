@@ -1,8 +1,8 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h2>Patient Records</h2>
-<a href="{{ url_for('patients.add_patient') }}" class="btn btn-primary mb-3">Add Patient</a>
+<h2 class="text-info">Patient Management Dashboard</h2>
+<a href="{{ url_for('patients.add_patient') }}" class="btn btn-primary mb-3"><i class="fa fa-user-plus"></i> Add New Patient</a>
 <table class="table table-bordered">
     <thead>
         <tr>
@@ -23,9 +23,9 @@
             <td>{{ patient.prescriptions }}</td>
             <td>{{ patient.lab_results }}</td>
             <td>
-                <a href="{{ url_for('patients.edit_patient', id=patient.id) }}" class="btn btn-warning btn-sm">Edit</a>
+                <a href="{{ url_for('patients.edit_patient', id=patient.id) }}" class="btn btn-warning btn-sm"><i class="fa fa-edit"></i> Edit</a>
                 <form action="{{ url_for('patients.delete_patient', id=patient.id) }}" method="POST" style="display:inline;">
-                    <button class="btn btn-danger btn-sm" type="submit">Delete</button>
+                    <button class="btn btn-danger btn-sm" type="submit"><i class="fa fa-trash"></i> Delete</button>
                 </form>
             </td>
         </tr>

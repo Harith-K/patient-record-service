@@ -1,28 +1,28 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h2>Add Patient</h2>
+<h2 class="text-primary">Add New Patient</h2>
 <form method="POST">
     <div class="form-group">
-        <label for="name">Name</label>
-        <input type="text" class="form-control" id="name" name="name" required>
+        <label for="name">Full Name</label>
+        <input type="text" class="form-control" id="name" name="name" placeholder="Enter patient name" required>
     </div>
     <div class="form-group">
-        <label for="age">Age</label>
-        <input type="number" class="form-control" id="age" name="age" required>
+        <label for="age">Patient Age</label>
+        <input type="number" class="form-control" id="age" name="age" placeholder="Enter patient age" required>
     </div>
     <div class="form-group">
         <label for="medical_history">Medical History</label>
-        <textarea class="form-control" id="medical_history" name="medical_history"></textarea>
+        <textarea class="form-control" id="medical_history" name="medical_history" placeholder="Provide medical history"></textarea>
     </div>
     <div class="form-group">
         <label for="prescriptions">Prescriptions</label>
-        <textarea class="form-control" id="prescriptions" name="prescriptions"></textarea>
+        <textarea class="form-control" id="prescriptions" name="prescriptions" placeholder="List prescriptions"></textarea>
     </div>
     <div class="form-group">
         <label for="lab_results">Lab Results</label>
-        <textarea class="form-control" id="lab_results" name="lab_results"></textarea>
+        <textarea class="form-control" id="lab_results" name="lab_results" placeholder="Enter lab results"></textarea>
     </div>
-    <button type="submit" class="btn btn-primary">Add Patient</button>
+    <button type="submit" class="btn btn-primary"><i class="fa fa-user-plus"></i> Add Patient</button>
 </form>
 {% endblock %}
